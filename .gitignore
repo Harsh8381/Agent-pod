@@ -1,0 +1,48 @@
+# Python virtual environment
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# IDE/editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local environment/config files
+.env
+.env.*
+*.local
+
+# Generated app data
+uploads/
+logs/
+chroma_db/
+*.sqlite3
+
+# Sensitive or local runtime data
+**/clinical_records.json
+**/transcript.txt
+**/summary.txt
+**/history.txt
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Build outputs
+build/
+dist/
+*.egg-info/

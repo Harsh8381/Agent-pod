@@ -1,0 +1,16 @@
+fastapi
+uvicorn[standard]
+chromadb
+sentence-transformers
+pypdf
+langchain-text-splitters
+python-dotenv
+numpy
+requests
+scikit-learn
+pytest
+python-multipart
+SpeechRecognition
+streamlit
+pandas
+altair
