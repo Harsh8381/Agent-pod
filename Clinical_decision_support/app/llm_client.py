@@ -16,6 +16,11 @@ def call_llm(prompt, system_prompt=None, temperature=0.3):
     if not COFORGE_API_URL:
         raise ValueError("COFORGE_API_URL not found in .env file.")
 
+    if not COFORGE_MODEL:
+        raise ValueError(
+            "COFORGE_MODEL is empty. Set it in .env to the exact model name enabled for your Coforge AI Studio account."
+        )
+
     clean_api_url = COFORGE_API_URL.strip().replace('"', '').replace("%22", "")
     clean_api_key = COFORGE_API_KEY.strip()
 
