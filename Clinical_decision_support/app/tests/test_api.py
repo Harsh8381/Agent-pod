@@ -85,3 +85,36 @@ def test_append_selected_insights_to_note_adds_values_under_heading():
     assert "Hyperlipidemia" in updated
     assert "Hypertension" in updated
     assert "- **MAJOR DIAGNOSIS / ISSUES**" in updated
+
+
+def test_code_suggestions_separate_diagnoses_and_procedures():
+    from frontend.streamlit_app import get_code_suggestions
+
+    result = get_code_suggestions(["Hypertension", "Complete blood count", "Color Blindness"])
+
+    assert result["icd10"]
+    assert result["cpt"]
+    assert all("ICD-10 Code" in item for item in result["icd10"])
+    assert all("CPT/HCPCS Code" in item for item in result["cpt"])
+
+
+def test_hypertension_uses_general_icd10_code():
+    from code_matcher import get_icd10_codes
+
+    result = get_icd10_codes(["Hypertension"])
+
+    assert result == [{
+        "Extracted Condition": "Hypertension",
+        "Matched Disease/Injury": "Essential (primary) hypertension",
+        "ICD-10 Code": "I10",
+    }]
+
+
+def test_procedure_insights_return_cpt_codes():
+    from frontend.streamlit_app import get_code_suggestions
+
+    result = get_code_suggestions(["Complete Blood Count"])
+
+    assert result["icd10"] == []
+    assert result["cpt"]
+    assert result["cpt"][0]["CPT/HCPCS Code"] == "85025"

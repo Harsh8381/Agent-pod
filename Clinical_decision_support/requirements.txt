@@ -3,6 +3,7 @@ uvicorn[standard]
 chromadb
 sentence-transformers
 pypdf
+python-docx
 langchain-text-splitters
 python-dotenv
 numpy
@@ -14,3 +15,4 @@ SpeechRecognition
 streamlit
 pandas
 altair
+rapidfuzz

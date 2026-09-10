@@ -1,8 +1,0 @@
-venv/
-__pycache__/
-*.pyc
-audio.wav
-clinical_records.json
-.env
-*.log
-temp_phrase_*.wav
