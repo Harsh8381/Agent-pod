@@ -801,9 +801,12 @@ def show_review_note():
                 if st.button("Regenerate CDS", type="secondary", use_container_width=True, disabled=not record.get("transcript", "").strip()):
                     try:
                         with st.spinner("Regenerating CDS recommendations..."):
-                            regenerated = HealthcareApiClient().regenerate_encounter(record["transcript"])
-                        record["retrieved_guidelines"] = regenerated.get("retrieved_guidelines", "")
-                        record["recommendations"] = regenerated.get("recommendations", "")
+                            regenerated = HealthcareApiClient().regenerate_cds(record)
+                        recommendations = regenerated.get("recommendations")
+                        if not recommendations or not str(recommendations).strip():
+                            raise RuntimeError("The CDS service returned no recommendation. The existing recommendation was kept.")
+                        record["retrieved_guidelines"] = regenerated.get("retrieved_guidelines", record.get("retrieved_guidelines", ""))
+                        record["recommendations"] = recommendations
                         record["cds_requested"] = True
                         record["analysis_version"] = ANALYSIS_VERSION
                         for index, existing in enumerate(st.session_state.records):

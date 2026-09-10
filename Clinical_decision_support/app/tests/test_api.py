@@ -75,6 +75,31 @@ def test_encounter_endpoint(monkeypatch):
     assert response.json()["metadata"]["agents_invoked"] == ["ambient_scribe", "clinical_decision_support"]
 
 
+def test_cds_endpoint_uses_existing_encounter_context(monkeypatch):
+    class FakeEncounterAgent:
+        def add_clinical_decision_support(self, context):
+            from app.agent.context import EncounterContext
+
+            assert context.transcript == "Patient reports cough."
+            assert context.patient_summary == "Cough reported."
+            context.recommendations = "Monitor symptoms."
+            return context
+
+    monkeypatch.setattr(routes, "get_encounter_agent", lambda: FakeEncounterAgent())
+    client = TestClient(app)
+
+    response = client.post(
+        "/encounters/cds",
+        json={
+            "transcript": "Patient reports cough.",
+            "patient_summary": "Cough reported.",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["recommendations"] == "Monitor symptoms."
+
+
 def test_append_selected_insights_to_note_adds_values_under_heading():
     from frontend.streamlit_app import append_selected_insights_to_note
 

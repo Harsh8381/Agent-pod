@@ -11,6 +11,9 @@ class HealthcareApiClient:
     def regenerate_encounter(self, transcript: str) -> dict:
         return self._post_encounter("/encounters/analyze", transcript, include_cds=True)
 
+    def regenerate_cds(self, encounter: dict) -> dict:
+        return self.add_cds(encounter)
+
     def scribe_encounter(self, transcript: str) -> dict:
         return self._post_encounter("/encounters/scribe", transcript, include_cds=False)
 
