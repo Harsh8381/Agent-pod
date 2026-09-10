@@ -18,22 +18,31 @@ class HealthcareApiClient:
         return self._post_encounter("/encounters/scribe", transcript, include_cds=False)
 
     def add_cds(self, encounter: dict) -> dict:
-        try:
-            response = requests.post(
-                f"{self.base_url}/encounters/cds",
-                json=encounter,
-                timeout=180,
-            )
-        except requests.exceptions.ConnectionError as error:
-            raise RuntimeError(
-                f"Cannot connect to the FastAPI backend at {self.base_url}. "
-                "Start it with: python -m app"
-            ) from error
-        except requests.exceptions.Timeout as error:
-            raise RuntimeError("The FastAPI backend timed out while running CDS.") from error
+        for attempt in range(2):
+            try:
+                response = requests.post(
+                    f"{self.base_url}/encounters/cds",
+                    json=encounter,
+                    timeout=180,
+                )
+            except requests.exceptions.ConnectionError as error:
+                raise RuntimeError(
+                    f"Cannot connect to the FastAPI backend at {self.base_url}. "
+                    "Start it with: python -m app"
+                ) from error
+            except requests.exceptions.Timeout as error:
+                raise RuntimeError("The FastAPI backend timed out while running CDS.") from error
 
-        response.raise_for_status()
-        return response.json()
+            response.raise_for_status()
+            result = response.json()
+            recommendation = result.get("recommendations")
+            if recommendation and str(recommendation).strip():
+                return result
+
+            if attempt == 0:
+                continue
+
+        raise RuntimeError("The CDS service returned no recommendation after retrying.")
 
     def _post_encounter(self, endpoint: str, transcript: str, include_cds: bool) -> dict:
         try:
